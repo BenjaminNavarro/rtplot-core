@@ -2,7 +2,7 @@
 Overview
 =========
 
-Core;functionalities;to;be;used;by;GUI;libraries;for;RTPlot
+Core;functionalities;to;be;used;by;GUI;libraries;for;real;time;plotting
 
 The license that applies to the whole package content is **CeCILL**. Please look at the license.txt file at the root of this repository.
 
@@ -17,9 +17,9 @@ About authors
 =====================
 
 rtplot-core has been developped by following authors: 
-+ Benjamin Navarro ()
++ Benjamin Navarro (LIRMM)
 
-Please contact Benjamin Navarro -  for more information or questions.
+Please contact Benjamin Navarro (navarro@lirmm.fr) - LIRMM for more information or questions.
 
 
 
