@@ -5,15 +5,13 @@ include(Package_Definition NO_POLICY_SCOPE)
 
 PROJECT(rtplot-core)
 
-declare_PID_Package(	AUTHOR 		idhuser
-			YEAR 		2018 
+declare_PID_Package(
+			AUTHOR 		Benjamin Navarro
+			YEAR 		2018
 			LICENSE 	CeCILL
-			DESCRIPTION 	TODO: input a short description of package rtplot-core utility here
+			DESCRIPTION Core functionalities to be used by GUI libraries for RTPlot
 		)
 
 set_PID_Package_Version(0 1)
 
-#now finding packages
-
 build_PID_Package()
-
