@@ -29,7 +29,7 @@ RTPlot::~RTPlot() {
 }
 
 void RTPlot::checkPlot(size_t plot) {
-	assert(plot < impl_->grid_rows*impl_->grid_cols);
+	assert(plot < impl_->grid_rows_*impl_->grid_cols_);
 	if(not static_cast<bool>(impl_->plots_[plot])) {
 		impl_->plots_[plot] = makePlot();
 		updateLayout();
@@ -37,14 +37,14 @@ void RTPlot::checkPlot(size_t plot) {
 }
 
 void RTPlot::updateLayout() {
-	impl_->layout_->setPlots(impl_->plots_, impl_->grid_rows, impl_->grid_cols);
+	impl_->layout_->setPlots(impl_->plots_, impl_->grid_rows_, impl_->grid_cols_);
 	refresh();
 }
 
 void RTPlot::setGridSize(size_t rows, size_t cols) {
 	assert((rows > 1) and (cols > 1));
-	impl_->grid_rows = rows;
-	impl_->grid_cols = cols;
+	impl_->grid_rows_ = rows;
+	impl_->grid_cols_ = cols;
 	impl_->plots_.resize(rows*cols);
 	impl_->window_->setMinimumSize(cols*getPlotWidth(), rows*getPlotHeight());
 	updateLayout();
@@ -54,8 +54,7 @@ void RTPlot::quit() {
 	// if(impl_->parser_)
 	//  impl_->parser_->stop();
 	disableAutoRefresh();
-	impl_->window_->hide();
-	refresh();
+	// impl_->window_->hide();
 }
 
 void RTPlot::addPoint(size_t plot, int curve, float x, float y) {
@@ -144,4 +143,19 @@ void RTPlot::setMaxPoints(size_t plot, size_t count) {
 	checkPlot(plot);
 	impl_->plots_[plot]->setMaxPoints(count);
 	refresh();
+}
+
+double RTPlot::getAverageRedrawDuration(size_t plot) {
+	checkPlot(plot);
+	return impl_->plots_[plot]->getAverageRedrawDuration();
+}
+
+double RTPlot::getAverageDrawLineDuration(size_t plot) {
+	checkPlot(plot);
+	return impl_->plots_[plot]->getAverageDrawLineDuration();
+}
+
+double RTPlot::getAverageEndLineDuration(size_t plot) {
+	checkPlot(plot);
+	return impl_->plots_[plot]->getAverageEndLineDuration();
 }

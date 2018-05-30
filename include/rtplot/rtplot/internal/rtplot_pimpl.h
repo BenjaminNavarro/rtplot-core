@@ -1,5 +1,6 @@
 #pragma once
 
+#include <rtplot/rtplot.h>
 #include <rtplot/rtplot_core.h>
 
 #include <rtplot/internal/rtplot_window.h>
@@ -15,8 +16,8 @@ namespace rtp {
 struct RTPlot::rtplot_members {
 	rtplot_members() :
 		auto_refresh_period_(0),
-		grid_rows(1),
-		grid_cols(1)
+		grid_rows_(1),
+		grid_cols_(1)
 	{
 	}
 
@@ -29,8 +30,8 @@ struct RTPlot::rtplot_members {
 	std::thread auto_refresh_thread_;
 	std::mutex auto_refresh_period_lock_;
 	size_t auto_refresh_period_;
-	size_t grid_rows;
-	size_t grid_cols;
+	size_t grid_rows_;
+	size_t grid_cols_;
 };
 
 }

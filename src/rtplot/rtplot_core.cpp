@@ -17,6 +17,21 @@ constexpr int _plot_margin_right = 40;
 constexpr int _plot_margin_bottom = 60;
 
 RTPlotCore::RTPlotCore() {
+	palette_ = {
+		Colors::Red,
+		Colors::Green,
+		Colors::Yellow,
+		Colors::Blue,
+		Colors::Magenta,
+		Colors::Cyan,
+		Colors::DarkRed,
+		Colors::DarkGreen,
+		Colors::DarkYellow,
+		Colors::DarkBlue,
+		Colors::DarkMagenta,
+		Colors::DarkCyan
+	};
+
 	xrange_ = std::make_pair(0.0, 10.0);
 	yrange_ = std::make_pair(0.0, 10.0);
 
@@ -203,6 +218,18 @@ void RTPlotCore::setMaxPoints(size_t count) {
 	}
 }
 
+double RTPlotCore::getAverageRedrawDuration() const {
+	return draw_timer.getAverageTime();
+}
+
+double RTPlotCore::getAverageDrawLineDuration() const {
+	return draw_line_timer.getAverageTime();
+}
+
+double RTPlotCore::getAverageEndLineDuration() const {
+	return end_line_timer.getAverageTime();
+}
+
 void RTPlotCore::labelsToggleButtonCallback() {
 	toggleLabels();
 }
@@ -220,6 +247,8 @@ RTPlotCore::Pairf RTPlotCore::getToggleButtonPosition() {
 }
 
 void RTPlotCore::drawPlot() {
+	draw_timer.start();
+
 	saveColor();
 
 	if(toggle_labels_) {
@@ -248,21 +277,24 @@ void RTPlotCore::drawPlot() {
 	for(auto& data: curves_data_) {
 		data.second.lock_.lock();
 		auto& c = data.second.points;
-		++idx;
 		if(c.size() > 1) {
 			PointXY prev, curr;
 			auto it = c.begin();
 
 			scaleToPlot(*it, prev);
 
-			setColor(idx%palette_.size());
+			setColor(palette_[idx++%palette_.size()]);
 			startLine();
 			for(++it; it != c.end(); ++it) {
 				scaleToPlot(*it, curr);
+				draw_line_timer.start();
 				drawLine(prev, curr);
+				draw_line_timer.end();
 				prev = curr;
 			}
+			end_line_timer.start();
 			endLine();
+			end_line_timer.end();
 		}
 		data.second.lock_.unlock();
 	}
@@ -275,6 +307,8 @@ void RTPlotCore::drawPlot() {
 	}
 
 	restoreColor();
+
+	draw_timer.end();
 }
 
 void RTPlotCore::handleWidgetEvent(MouseEvent event, PointXY cursor_position) {
@@ -307,11 +341,22 @@ void RTPlotCore::drawAxes() {
 	txt_size = measureText(plot_name_);
 	drawText(plot_name_, PointXY{plot_offset_.first+(plot_size_.first-txt_size.first)/2, plot_offset_.second - txt_size.second/2});
 
-	startLine();
 	// Y axis line
+	startLine();
+	draw_line_timer.start();
 	drawLine(plot_offset_, PointXY{plot_offset_.first, plot_offset_.second + plot_size_.second});
+	draw_line_timer.end();
+	end_line_timer.start();
+	endLine();
+	end_line_timer.end();
 	// X axis line
+	startLine();
+	draw_line_timer.start();
 	drawLine(PointXY{plot_offset_.first, plot_offset_.second + plot_size_.second}, PointXY{plot_offset_.first + plot_size_.first, plot_offset_.second + plot_size_.second});
+	draw_line_timer.end();
+	end_line_timer.start();
+	endLine();
+	end_line_timer.end();
 
 	// Draw axes ticks
 	int nticks = 4*subdivisions_;
@@ -333,13 +378,25 @@ void RTPlotCore::drawAxes() {
 			saveColor();
 			setColor(Colors::Gray);
 			setLineStyle(LineStyle::Dotted);
+			startLine();
+			draw_line_timer.start();
 			drawLine(PointXY{xstart, ystart - 6}, PointXY{xend, plot_offset_.second});
+			draw_line_timer.end();
+			end_line_timer.start();
+			endLine();
+			end_line_timer.end();
 			restoreColor();
 			setLineStyle(LineStyle::Solid);
 
 			drawXTickValue(i*xtick_range + xrange.first, std::make_pair(xstart, ystart));
 		}
+		startLine();
+		draw_line_timer.start();
 		drawLine(PointXY{xstart, ystart}, PointXY{xend, yend});
+		draw_line_timer.end();
+		end_line_timer.start();
+		endLine();
+		end_line_timer.end();
 
 		// Y axis tick
 		xstart = xend = plot_offset_.first;
@@ -353,15 +410,26 @@ void RTPlotCore::drawAxes() {
 			saveColor();
 			setColor(Colors::Gray);
 			setLineStyle(LineStyle::Dotted);
+			startLine();
+			draw_line_timer.start();
 			drawLine(PointXY{xstart + 6, ystart}, PointXY{plot_offset_.first + plot_size_.first, yend});
+			draw_line_timer.end();
+			end_line_timer.start();
+			endLine();
+			end_line_timer.end();
 			restoreColor();
 			setLineStyle(LineStyle::Solid);
 
 			drawYTickValue(i*ytick_range + yrange.first, std::make_pair(xstart, ystart));
 		}
+		startLine();
+		draw_line_timer.start();
 		drawLine(PointXY{xstart, ystart}, PointXY{xend, yend});
+		draw_line_timer.end();
+		end_line_timer.start();
+		endLine();
+		end_line_timer.end();
 	}
-	endLine();
 }
 
 void RTPlotCore::drawLabels() {
@@ -372,23 +440,26 @@ void RTPlotCore::drawLabels() {
 	pushClip(PointXY{xstart, getYPosition()}, Pairf{xstart+label_area_width_, getHeight()});
 
 	saveColor();
-	startLine();
 
 	for(auto& data : curves_data_) {
 		auto& lbl = data.second.label;
-		++idx;
 
 		setColor(Colors::Black);
 
 		ystart = plot_offset_.second + yoffset;
 		drawText(lbl, PointXY{xstart + 30, ystart + texth/2});
 
-		setColor(idx%palette_.size());
+		setColor(palette_[idx++%palette_.size()]);
+		startLine();
+		draw_line_timer.start();
 		drawLine(PointXY{xstart, ystart+texth/4}, PointXY{xstart+20, ystart+texth/4});
+		draw_line_timer.end();
+		end_line_timer.start();
+		endLine();
+		end_line_timer.end();
 
 		yoffset += texth;
 	}
-	endLine();
 	restoreColor();
 
 	popClip();
