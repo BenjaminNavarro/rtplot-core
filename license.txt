@@ -1,7 +1,7 @@
 
 Software license for the software named : rtplot-core
 
-Software description : CorefunctionalitiestobeusedbyGUIlibrariesforrealtimeplotting
+Software description : Core functionalities to be used by GUI libraries for real time plotting
 
 Copyright (C) 2018  Benjamin Navarro (LIRMM)
 
