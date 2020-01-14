@@ -492,8 +492,8 @@ RTPlotCore::PointXY RTPlotCore::scaleToGraph(const PointXY& point) {
 
 void RTPlotCore::drawXTickValue(float num, const PointXY& point) {
 
-	char str[10];
-	sprintf(str, "%.2f", num);
+	char str[15];
+	snprintf(str, 15, "%.2f", num);
 	auto value = std::string(str);
 	auto txt_size = measureText(value);
 	drawText(value, PointXY{point.first-txt_size.first/2, point.second+txt_size.second});
@@ -501,8 +501,8 @@ void RTPlotCore::drawXTickValue(float num, const PointXY& point) {
 
 void RTPlotCore::drawYTickValue(float num, const PointXY& point) {
 
-	char str[10];
-	sprintf(str, "%.2f", num);
+	char str[15];
+	snprintf(str, 15, "%.2f", num);
 	auto value = std::string(str);
 	auto txt_size = measureText(value);
 	drawText(value, PointXY{point.first-txt_size.first-5, point.second+txt_size.second/2-2});
