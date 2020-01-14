@@ -16,6 +16,6 @@ declare_PID_Package(
 			DESCRIPTION 	Core functionalities to be used by GUI libraries for real time plotting
 		)
 
-set_PID_Package_Version(0.2.1)
+set_PID_Package_Version(0.3.0)
 
 build_PID_Package()
