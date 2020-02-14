@@ -6,25 +6,24 @@ namespace rtp {
 
 class RTPlot;
 
-class InputParserThread
-{
+class InputParserThread {
 public:
-	InputParserThread(RTPlot* mw);
-	~InputParserThread();
+    InputParserThread(RTPlot* mw);
+    ~InputParserThread();
 
-	void run();
+    void run();
 
-	void stop();
+    void stop();
 
-	void join();
+    void join();
 
 private:
-	int peek_stdin(unsigned int secs);
-	bool stop_;
-	RTPlot* mw_;
-	std::thread th_;
+    int peek_stdin(unsigned int secs);
+    bool stop_;
+    RTPlot* mw_;
+    std::thread th_;
 
-	void process();
+    void process();
 };
 
-}
+} // namespace rtp
