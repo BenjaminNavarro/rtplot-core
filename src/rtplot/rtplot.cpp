@@ -182,6 +182,19 @@ const std::vector<Colors>& RTPlot::getColorPalette(size_t plot) {
     return impl_->plots_[plot]->getColorPalette();
 }
 
+void RTPlot::setCurveVisibility(size_t plot, int curve, bool visibility) {
+    checkPlot(plot);
+    impl_->plots_[plot]->setCurveVisibility(curve, visibility);
+}
+
+bool RTPlot::getCurveVisibility(size_t plot, int curve) const {
+    return impl_->plots_.at(plot)->getCurveVisibility(curve);
+}
+
+void RTPlot::toggleCurveVisibility(size_t plot, int curve) {
+    impl_->plots_.at(plot)->toggleCurveVisibility(curve);
+}
+
 double RTPlot::getAverageRedrawDuration(size_t plot) {
     checkPlot(plot);
     return impl_->plots_[plot]->getAverageRedrawDuration();

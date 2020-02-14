@@ -245,6 +245,18 @@ const std::vector<Colors>& RTPlotCore::getColorPalette() {
     return palette_;
 }
 
+void RTPlotCore::setCurveVisibility(int curve, bool visibility) {
+    curves_data_[curve].is_visible = visibility;
+}
+
+bool RTPlotCore::getCurveVisibility(int curve) const {
+    return curves_data_.at(curve).is_visible;
+}
+
+void RTPlotCore::toggleCurveVisibility(int curve) {
+    setCurveVisibility(curve, not getCurveVisibility(curve));
+}
+
 double RTPlotCore::getAverageRedrawDuration() const {
     return draw_timer.getAverageTime();
 }
@@ -305,6 +317,9 @@ void RTPlotCore::drawPlot() {
     initScaleToPlot();
     for (auto& data : curves_data_) {
         data.second.lock_.lock();
+        if (not data.second.is_visible) {
+            continue;
+        }
         auto& c = data.second.points;
         if (c.size() > 1) {
             PointXY prev, curr;

@@ -172,6 +172,26 @@ public:
     const std::vector<Colors>& getColorPalette();
 
     /**
+     * Change the visibility of a given curve
+     * @param curve the index of the curve. User defined, can be any number
+     * @param visibility the curve is drawn if true
+     */
+    void setCurveVisibility(int curve, bool visibility);
+
+    /**
+     * Get the visibility of a given curve
+     * @param curve the index of the curve. User defined, can be any number
+     * @return true is the the curve is drawn, false otherwise
+     */
+    bool getCurveVisibility(int curve) const;
+
+    /**
+     * Toggle the the visibility of a given curve
+     * @param curve the index of the curve. User defined, can be any number
+     */
+    void toggleCurveVisibility(int curve);
+
+    /**
      * Get the average time spent to redraw the widget
      * @return the duration, in seconds
      */
@@ -360,13 +380,15 @@ private:
     virtual void drawYTickValue(float num, const PointXY& point) final;
 
     struct CurveData {
-        CurveData() : max_points(std::numeric_limits<size_t>::max()) {
+        CurveData()
+            : max_points(std::numeric_limits<size_t>::max()), is_visible(true) {
         }
 
         std::deque<PointXY> points;
         std::pair<std::multiset<float>, std::multiset<float>> ordered_list;
         std::string label;
         size_t max_points;
+        bool is_visible;
         std::mutex lock_;
     };
     std::map<int, CurveData> curves_data_;

@@ -192,6 +192,26 @@ public:
      */
     const std::vector<Colors>& getColorPalette(size_t plot);
 
+    /*
+     * Change the visibility of a given curve
+     * @param curve the index of the curve. User defined, can be any number
+     * @param visibility the curve is drawn if true
+     */
+    void setCurveVisibility(size_t plot, int curve, bool visibility);
+
+    /**
+     * Get the visibility of a given curve
+     * @param curve the index of the curve. User defined, can be any number
+     * @return true is the the curve is drawn, false otherwise
+     */
+    bool getCurveVisibility(size_t plot, int curve) const;
+
+    /**
+     * Toggle the the visibility of a given curve
+     * @param curve the index of the curve. User defined, can be any number
+     */
+    void toggleCurveVisibility(size_t plot, int curve);
+
     /**
      * Get the average time spent to redraw the widget
      * @param plot the index of the plot containing the curve. Must be in the
