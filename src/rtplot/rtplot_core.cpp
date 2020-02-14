@@ -80,7 +80,7 @@ void RTPlotCore::addPoint(int curve, float x, float y) {
         float max_val = -std::numeric_limits<float>::infinity();
         for (auto& curve_data : curves_data_) {
             auto& list = curve_data.second.ordered_list.first; // xvalues
-            if (list.empty()) {
+            if (list.empty() or not curve_data.second.is_visible) {
                 continue;
             }
             float c_min = *list.begin();
@@ -97,7 +97,7 @@ void RTPlotCore::addPoint(int curve, float x, float y) {
         float max_val = -std::numeric_limits<float>::infinity();
         for (auto& curve_data : curves_data_) {
             auto& list = curve_data.second.ordered_list.second; // yvalues
-            if (list.empty()) {
+            if (list.empty() or not curve_data.second.is_visible) {
                 continue;
             }
             float c_min = *list.begin();
@@ -316,8 +316,9 @@ void RTPlotCore::drawPlot() {
     int idx = 0;
     initScaleToPlot();
     for (auto& data : curves_data_) {
-        data.second.lock_.lock();
+        std::lock_guard<std::mutex> lock(data.second.lock_);
         if (not data.second.is_visible) {
+            idx++;
             continue;
         }
         auto& c = data.second.points;
@@ -340,7 +341,6 @@ void RTPlotCore::drawPlot() {
             endLine();
             end_line_timer.end();
         }
-        data.second.lock_.unlock();
     }
     popClip();
 
