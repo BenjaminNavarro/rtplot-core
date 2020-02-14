@@ -5,17 +5,17 @@ include(Package_Definition NO_POLICY_SCOPE)
 
 PROJECT(rtplot-core)
 
-declare_PID_Package(
-			AUTHOR 			Benjamin Navarro
-			INSTITUTION		LIRMM
-			MAIL			navarro@lirmm.fr
-			ADDRESS 		git@github.com:BenjaminNavarro/rtplot-core.git
-			PUBLIC_ADDRESS 	https://github.com/BenjaminNavarro/rtplot-core.git
-			YEAR 			2018
-			LICENSE 		CeCILL
-			DESCRIPTION 	Core functionalities to be used by GUI libraries for real time plotting
-		)
-
-set_PID_Package_Version(0.3.0)
+PID_Package(
+	AUTHOR 			Benjamin Navarro
+	INSTITUTION		LIRMM
+	MAIL			navarro@lirmm.fr
+	ADDRESS 		git@github.com:BenjaminNavarro/rtplot-core.git
+	PUBLIC_ADDRESS 	https://github.com/BenjaminNavarro/rtplot-core.git
+	YEAR 			2018
+	LICENSE 		CeCILL
+	CODE_STYLE		pid11
+	DESCRIPTION 	Core functionalities to be used by GUI libraries for real time plotting
+	VERSION			0.3.0
+)
 
 build_PID_Package()
