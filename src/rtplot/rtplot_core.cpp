@@ -73,10 +73,9 @@ void RTPlotCore::addPoint(int curve, float x, float y) {
     std::lock_guard<std::mutex> lock(data.lock_);
 
     data.points.push_back(std::make_pair(x, y));
-    data.ordered_list.first.insert(x);
-    data.ordered_list.second.insert(y);
 
     if (auto_xrange_) {
+        data.ordered_list.first.insert(x);
         float min_val = std::numeric_limits<float>::infinity();
         float max_val = -std::numeric_limits<float>::infinity();
         for (auto& curve_data : curves_data_) {
@@ -93,6 +92,7 @@ void RTPlotCore::addPoint(int curve, float x, float y) {
         xrange_auto_.second = max_val;
     }
     if (auto_yrange_) {
+        data.ordered_list.second.insert(y);
         float min_val = std::numeric_limits<float>::infinity();
         float max_val = -std::numeric_limits<float>::infinity();
         for (auto& curve_data : curves_data_) {
@@ -209,10 +209,22 @@ void RTPlotCore::setCurveLabel(int curve, const std::string& label) {
 
 void RTPlotCore::setAutoXRange() {
     auto_xrange_ = true;
+    for (auto& data : curves_data_) {
+        data.second.ordered_list.first.clear();
+        for (auto point : data.second.points) {
+            data.second.ordered_list.first.insert(point.first);
+        }
+    }
 }
 
 void RTPlotCore::setAutoYRange() {
     auto_yrange_ = true;
+    for (auto& data : curves_data_) {
+        data.second.ordered_list.second.clear();
+        for (auto point : data.second.points) {
+            data.second.ordered_list.second.insert(point.second);
+        }
+    }
 }
 
 void RTPlotCore::setMaxPoints(int curve, size_t count) {
