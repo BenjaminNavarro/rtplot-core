@@ -205,6 +205,9 @@ protected:
         EnterWidget,
         LeaveWidget,
         MoveInsideWidget,
+		LeftClick,
+		MiddleClick,
+		RightClick,
         Unknown
     };
 
@@ -378,6 +381,8 @@ private:
      * @param point the text position
      */
     virtual void drawYTickValue(float num, const PointXY& point) final;
+
+	void handleLeftClick(PointXY cursor_position);
 
     struct CurveData {
         CurveData()

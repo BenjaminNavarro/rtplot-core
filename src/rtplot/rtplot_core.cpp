@@ -368,6 +368,9 @@ void RTPlotCore::handleWidgetEvent(MouseEvent event, PointXY cursor_position) {
     case MouseEvent::MoveInsideWidget:
         last_cursor_position_ = cursor_position;
         break;
+    case MouseEvent::LeftClick:
+        handleLeftClick(cursor_position);
+        break;
     default:
         break;
     }
@@ -581,4 +584,27 @@ void RTPlotCore::drawYTickValue(float num, const PointXY& point) {
     auto txt_size = measureText(value);
     drawText(value, PointXY{point.first - txt_size.first - 5,
                             point.second + txt_size.second / 2 - 2});
+}
+
+void RTPlotCore::handleLeftClick(PointXY cursor_position) {
+    // Check for a click on a curve label to change its visibility
+    if (display_labels_) {
+        int xstart = plot_offset_.first + plot_size_.first + 10;
+        int xend = xstart + label_area_width_;
+        int ystart = getYPosition();
+        int yend = ystart + getHeight();
+        // Check if the click is inside the label area
+        if ((cursor_position.first > xstart) and
+            (cursor_position.first < xend) and
+            ((cursor_position.second > ystart) and
+             (cursor_position.second < yend))) {
+
+            int curve_idx = (cursor_position.second - plot_offset_.second) / 16;
+            if (curve_idx < curves_data_.size()) {
+                auto curve_pos = curves_data_.begin();
+                std::advance(curve_pos, curve_idx);
+                toggleCurveVisibility(curve_pos->first);
+            }
+        }
+    }
 }
