@@ -1,21 +1,22 @@
 /*      File: rtplot.cpp
-*       This file is part of the program rtplot-core
-*       Program description : Core functionalities to be used by GUI libraries for real time plotting
-*       Copyright (C) 2018 -  Benjamin Navarro (LIRMM). All Right reserved.
-*
-*       This software is free software: you can redistribute it and/or modify
-*       it under the terms of the CeCILL license as published by
-*       the CEA CNRS INRIA, either version 2.1
-*       of the License, or (at your option) any later version.
-*       This software is distributed in the hope that it will be useful,
-*       but WITHOUT ANY WARRANTY without even the implied warranty of
-*       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-*       CeCILL License for more details.
-*
-*       You should have received a copy of the CeCILL License
-*       along with this software. If not, it can be found on the official website
-*       of the CeCILL licenses family (http://www.cecill.info/index.en.html).
-*/
+ *       This file is part of the program rtplot-core
+ *       Program description : Core functionalities to be used by GUI libraries
+ * for real time plotting Copyright (C) 2018 -  Benjamin Navarro (LIRMM). All
+ * Right reserved.
+ *
+ *       This software is free software: you can redistribute it and/or modify
+ *       it under the terms of the CeCILL license as published by
+ *       the CEA CNRS INRIA, either version 2.1
+ *       of the License, or (at your option) any later version.
+ *       This software is distributed in the hope that it will be useful,
+ *       but WITHOUT ANY WARRANTY without even the implied warranty of
+ *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *       CeCILL License for more details.
+ *
+ *       You should have received a copy of the CeCILL License
+ *       along with this software. If not, it can be found on the official
+ * website of the CeCILL licenses family (http://www.cecill.info/index.en.html).
+ */
 #include <rtplot/rtplot.h>
 #include <rtplot/rtplot_core.h>
 #include <rtplot/internal/rtplot_pimpl.h>
@@ -163,6 +164,22 @@ void RTPlot::setMaxPoints(size_t plot, size_t count) {
     checkPlot(plot);
     impl_->plots_[plot]->setMaxPoints(count);
     refresh();
+}
+
+void RTPlot::setColorPalette(const std::vector<Colors>& palette) {
+    for (auto& plot : impl_->plots_) {
+        plot->setColorPalette(palette);
+    }
+}
+
+void RTPlot::setColorPalette(size_t plot, const std::vector<Colors>& palette) {
+    checkPlot(plot);
+    impl_->plots_[plot]->setColorPalette(palette);
+}
+
+const std::vector<Colors>& RTPlot::getColorPalette(size_t plot) {
+    checkPlot(plot);
+    return impl_->plots_[plot]->getColorPalette();
 }
 
 double RTPlot::getAverageRedrawDuration(size_t plot) {
