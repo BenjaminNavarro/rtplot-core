@@ -557,7 +557,7 @@ RTPlotCore::PointXY RTPlotCore::scaleToGraph(const PointXY& point) {
     xrange = auto_xrange_ ? xrange_auto_ : xrange_;
     yrange = auto_yrange_ ? yrange_auto_ : yrange_;
     ret.first = xrange.first + (xrange.second - xrange.first) *
-                                   (point.first - getXPosition()) /
+                                   (point.first - plot_offset_.first) /
                                    plot_size_.first;
     ret.second = yrange.second - (yrange.second - yrange.first) *
                                      (point.second - plot_offset_.second) /

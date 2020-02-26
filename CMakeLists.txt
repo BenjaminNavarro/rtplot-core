@@ -15,7 +15,7 @@ PID_Package(
 	LICENSE 		CeCILL
 	CODE_STYLE		pid11
 	DESCRIPTION 	Core functionalities to be used by GUI libraries for real time plotting
-	VERSION			0.4.0
+	VERSION			0.3.1
 )
 
 build_PID_Package()
