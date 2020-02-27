@@ -239,16 +239,6 @@ public:
      */
     void disableFastPlotting(size_t plot);
 
-    /**
-     * Get the average time spent to redraw the widget
-     * @param plot the index of the plot containing the curve. Must be in the
-     * [0, \a rows*\a cols[ interval.
-     * @return the duration, in seconds
-     */
-    virtual double getAverageRedrawDuration(size_t plot) final;
-    virtual double getAverageDrawLineDuration(size_t plot) final;
-    virtual double getAverageEndLineDuration(size_t plot) final;
-
 protected:
     /**
      * Must create and initialize the RTPlot window and layout.

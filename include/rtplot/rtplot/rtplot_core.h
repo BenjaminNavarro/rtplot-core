@@ -201,14 +201,6 @@ public:
      */
     void disableFastPlotting();
 
-    /**
-     * Get the average time spent to redraw the widget
-     * @return the duration, in seconds
-     */
-    virtual double getAverageRedrawDuration() const final;
-    virtual double getAverageDrawLineDuration() const final;
-    virtual double getAverageEndLineDuration() const final;
-
 protected:
     enum class LineStyle { Solid, Dotted };
     enum class MouseEvent {
@@ -440,38 +432,6 @@ private:
 
     std::string display_labels_btn_text_;
     std::vector<Colors> palette_;
-
-    class Timer {
-    public:
-        Timer() : total_duration_ns_(0), total_calls_(0) {
-        }
-        void start() {
-            t_start = std::chrono::high_resolution_clock::now();
-        }
-
-        void end() {
-            std::chrono::high_resolution_clock::time_point t_end =
-                std::chrono::high_resolution_clock::now();
-            total_duration_ns_ +=
-                std::chrono::duration_cast<std::chrono::nanoseconds>(t_end -
-                                                                     t_start)
-                    .count();
-            ++total_calls_;
-        }
-
-        double getAverageTime() const {
-            return 1e-9 * double(total_duration_ns_) / double(total_calls_);
-        }
-
-    private:
-        size_t total_duration_ns_;
-        size_t total_calls_;
-        std::chrono::high_resolution_clock::time_point t_start;
-    };
-
-    Timer draw_timer;
-    Timer draw_line_timer;
-    Timer end_line_timer;
 };
 
 } // namespace rtp

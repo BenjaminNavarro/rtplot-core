@@ -214,18 +214,3 @@ void RTPlot::disableFastPlotting() {
         plot->disableFastPlotting();
     }
 }
-
-double RTPlot::getAverageRedrawDuration(size_t plot) {
-    checkPlot(plot);
-    return impl_->plots_[plot]->getAverageRedrawDuration();
-}
-
-double RTPlot::getAverageDrawLineDuration(size_t plot) {
-    checkPlot(plot);
-    return impl_->plots_[plot]->getAverageDrawLineDuration();
-}
-
-double RTPlot::getAverageEndLineDuration(size_t plot) {
-    checkPlot(plot);
-    return impl_->plots_[plot]->getAverageEndLineDuration();
-}
