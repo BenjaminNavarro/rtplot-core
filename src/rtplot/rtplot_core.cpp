@@ -28,6 +28,8 @@
 #include <mutex>
 #include <functional>
 
+#define ENABLE_PROFILING 0
+
 using namespace rtp;
 
 constexpr int _plot_margin_left = 90;
@@ -57,6 +59,7 @@ RTPlotCore::RTPlotCore() {
     auto_yrange_ = false;
 
     display_cursor_coordinates_ = false;
+    fast_plotting_ = false;
 
     display_labels_btn_text_ = "+";
 }
@@ -75,7 +78,8 @@ void RTPlotCore::addPoint(int curve, float x, float y) {
     data.points.push_back(std::make_pair(x, y));
 
     if (auto_xrange_) {
-        data.ordered_list.first.insert(x);
+        data.previous_insertion_point.first = data.ordered_list.first.insert(
+            data.previous_insertion_point.first, x);
         float min_val = std::numeric_limits<float>::infinity();
         float max_val = -std::numeric_limits<float>::infinity();
         for (auto& curve_data : curves_data_) {
@@ -92,7 +96,8 @@ void RTPlotCore::addPoint(int curve, float x, float y) {
         xrange_auto_.second = max_val;
     }
     if (auto_yrange_) {
-        data.ordered_list.second.insert(y);
+        data.previous_insertion_point.second = data.ordered_list.second.insert(
+            data.previous_insertion_point.second, y);
         float min_val = std::numeric_limits<float>::infinity();
         float max_val = -std::numeric_limits<float>::infinity();
         for (auto& curve_data : curves_data_) {
@@ -131,16 +136,20 @@ void RTPlotCore::removeFirstPoint(int curve) {
 
     points.pop_front();
 
-    auto& xlist = ordered_list.first;
-    auto it = xlist.find(removed_point.first);
-    if (it != xlist.end()) { // Shouldn't be necessary
-        xlist.erase(it);
+    if (auto_xrange_) {
+        auto& xlist = ordered_list.first;
+        auto it = xlist.find(removed_point.first);
+        if (it != xlist.end()) { // Shouldn't be necessary
+            xlist.erase(it);
+        }
     }
 
-    auto& ylist = ordered_list.second;
-    it = ylist.find(removed_point.second);
-    if (it != ylist.end()) { // Shouldn't be necessary
-        ylist.erase(it);
+    if (auto_yrange_) {
+        auto& ylist = ordered_list.second;
+        auto it = ylist.find(removed_point.second);
+        if (it != ylist.end()) { // Shouldn't be necessary
+            ylist.erase(it);
+        }
     }
 }
 
@@ -210,9 +219,14 @@ void RTPlotCore::setCurveLabel(int curve, const std::string& label) {
 void RTPlotCore::setAutoXRange() {
     auto_xrange_ = true;
     for (auto& data : curves_data_) {
-        data.second.ordered_list.first.clear();
-        for (auto point : data.second.points) {
-            data.second.ordered_list.first.insert(point.first);
+        auto& ordered_list = data.second.ordered_list.first;
+        auto& previous_insertion_point =
+            data.second.previous_insertion_point.first;
+        auto& points = data.second.points;
+
+        ordered_list.clear();
+        for (auto point : points) {
+            previous_insertion_point = ordered_list.insert(point.first);
         }
     }
 }
@@ -220,9 +234,14 @@ void RTPlotCore::setAutoXRange() {
 void RTPlotCore::setAutoYRange() {
     auto_yrange_ = true;
     for (auto& data : curves_data_) {
-        data.second.ordered_list.second.clear();
-        for (auto point : data.second.points) {
-            data.second.ordered_list.second.insert(point.second);
+        auto& ordered_list = data.second.ordered_list.second;
+        auto& previous_insertion_point =
+            data.second.previous_insertion_point.second;
+        auto& points = data.second.points;
+
+        ordered_list.clear();
+        for (auto point : points) {
+            previous_insertion_point = ordered_list.insert(point.second);
         }
     }
 }
@@ -257,6 +276,14 @@ void RTPlotCore::toggleCurveVisibility(int curve) {
     setCurveVisibility(curve, not getCurveVisibility(curve));
 }
 
+void RTPlotCore::enableFastPlotting() {
+    fast_plotting_ = true;
+}
+
+void RTPlotCore::disableFastPlotting() {
+    fast_plotting_ = false;
+}
+
 double RTPlotCore::getAverageRedrawDuration() const {
     return draw_timer.getAverageTime();
 }
@@ -287,7 +314,9 @@ RTPlotCore::Pairf RTPlotCore::getToggleButtonPosition() {
 }
 
 void RTPlotCore::drawPlot() {
+#if ENABLE_PROFILING
     draw_timer.start();
+#endif
 
     saveColor();
 
@@ -325,21 +354,40 @@ void RTPlotCore::drawPlot() {
         if (c.size() > 1) {
             PointXY prev, curr;
             auto it = c.begin();
+            float dx = plot_size_.first / c.size();
+            int prev_x = 0;
+            float x = 0.f;
 
             scaleToPlot(*it, prev);
 
             setColor(palette_[idx++ % palette_.size()]);
             startLine();
             for (++it; it != c.end(); ++it) {
+                if (fast_plotting_) {
+                    x += dx;
+                    if (int(x) > prev_x) {
+                        prev_x = int(x);
+                    } else {
+                        continue;
+                    }
+                }
                 scaleToPlot(*it, curr);
+#if ENABLE_PROFILING
                 draw_line_timer.start();
+#endif
                 drawLine(prev, curr);
+#if ENABLE_PROFILING
                 draw_line_timer.end();
+#endif
                 prev = curr;
             }
+#if ENABLE_PROFILING
             end_line_timer.start();
+#endif
             endLine();
+#if ENABLE_PROFILING
             end_line_timer.end();
+#endif
         }
     }
     popClip();
@@ -354,7 +402,9 @@ void RTPlotCore::drawPlot() {
 
     restoreColor();
 
+#if ENABLE_PROFILING
     draw_timer.end();
+#endif
 }
 
 void RTPlotCore::handleWidgetEvent(MouseEvent event, PointXY cursor_position) {

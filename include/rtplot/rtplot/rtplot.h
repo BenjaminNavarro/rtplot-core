@@ -213,6 +213,33 @@ public:
     void toggleCurveVisibility(size_t plot, int curve);
 
     /**
+     * Enable fast ploting for all plots (off by default)
+     * This has the effect of slightly reducing the plot accuracy.
+     *
+     * With fast plotting enabled, at most one point per pixel will be drawn,
+     * meaning less lines will be drawn at the cost of skipping some points
+     * which might induce small visual inaccuracies.
+     */
+    void enableFastPlotting();
+
+    /**
+     * Enable fast ploting for a given plot. See RTPlot::enableFastPlotting.
+     */
+    void enableFastPlotting(size_t plot);
+
+    /**
+     * Disable fast plotting for all plots (off by default). See
+     * RTPlot::enableFastPlotting
+     */
+    void disableFastPlotting();
+
+    /**
+     * Disable fast plotting  for a given plot (off by default). See
+     * RTPlot::enableFastPlotting
+     */
+    void disableFastPlotting(size_t plot);
+
+    /**
      * Get the average time spent to redraw the widget
      * @param plot the index of the plot containing the curve. Must be in the
      * [0, \a rows*\a cols[ interval.

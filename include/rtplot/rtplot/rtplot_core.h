@@ -192,6 +192,16 @@ public:
     void toggleCurveVisibility(int curve);
 
     /**
+     * Enable fast ploting (off by default). See RTPlot::enableFastPlotting
+     */
+    void enableFastPlotting();
+
+    /**
+     * Disable fast plotting (off by default). See RTPlot::enableFastPlotting
+     */
+    void disableFastPlotting();
+
+    /**
      * Get the average time spent to redraw the widget
      * @return the duration, in seconds
      */
@@ -416,6 +426,7 @@ private:
     bool display_labels_;
     bool toggle_labels_;
     bool display_cursor_coordinates_;
+    bool fast_plotting_;
 
     Pairf current_xrange_, current_yrange_;
     float current_xscale_, current_yscale_;

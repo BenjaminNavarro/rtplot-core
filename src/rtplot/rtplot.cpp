@@ -195,6 +195,26 @@ void RTPlot::toggleCurveVisibility(size_t plot, int curve) {
     impl_->plots_.at(plot)->toggleCurveVisibility(curve);
 }
 
+void RTPlot::enableFastPlotting(size_t plot) {
+    impl_->plots_.at(plot)->enableFastPlotting();
+}
+
+void RTPlot::enableFastPlotting() {
+    for (auto& plot : impl_->plots_) {
+        plot->enableFastPlotting();
+    }
+}
+
+void RTPlot::disableFastPlotting(size_t plot) {
+    impl_->plots_.at(plot)->disableFastPlotting();
+}
+
+void RTPlot::disableFastPlotting() {
+    for (auto& plot : impl_->plots_) {
+        plot->disableFastPlotting();
+    }
+}
+
 double RTPlot::getAverageRedrawDuration(size_t plot) {
     checkPlot(plot);
     return impl_->plots_[plot]->getAverageRedrawDuration();
