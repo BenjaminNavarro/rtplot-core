@@ -215,9 +215,9 @@ protected:
         EnterWidget,
         LeaveWidget,
         MoveInsideWidget,
-		LeftClick,
-		MiddleClick,
-		RightClick,
+        LeftClick,
+        MiddleClick,
+        RightClick,
         Unknown
     };
 
@@ -247,7 +247,8 @@ protected:
 
     /**
      * Set the clipping area. No drawing outside this region must be allowed
-     * @param start the coordinates of the top-left corner of the clipping area.
+     * @param start the coordinates of the top-left corner of the clipping
+     * area.
      * @param size  the size in pixels of the clipping area.
      */
     virtual void pushClip(const PointXY& start, const Pairf& size) = 0;
@@ -392,15 +393,21 @@ private:
      */
     virtual void drawYTickValue(float num, const PointXY& point) final;
 
-	void handleLeftClick(PointXY cursor_position);
+    void handleLeftClick(PointXY cursor_position);
 
     struct CurveData {
         CurveData()
-            : max_points(std::numeric_limits<size_t>::max()), is_visible(true) {
+            : previous_insertion_point(std::make_pair(
+                  ordered_list.first.end(), ordered_list.second.end())),
+              max_points(std::numeric_limits<size_t>::max()),
+              is_visible(true) {
         }
 
         std::deque<PointXY> points;
         std::pair<std::multiset<float>, std::multiset<float>> ordered_list;
+        std::pair<std::multiset<float>::const_iterator,
+                  std::multiset<float>::const_iterator>
+            previous_insertion_point;
         std::string label;
         size_t max_points;
         bool is_visible;
