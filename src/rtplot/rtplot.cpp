@@ -124,9 +124,13 @@ void RTPlot::enableAutoRefresh(uint period_ms) {
     if (create_thread) {
         impl_->auto_refresh_thread_ = thread([this]() {
             while (impl_->auto_refresh_period_) {
+                using namespace std::chrono;
+                auto start = high_resolution_clock::now();
                 refresh_mtx.lock();
                 redraw();
                 refresh_mtx.unlock();
+                this_thread::sleep_until(
+                    start + milliseconds(impl_->auto_refresh_period_));
             }
         });
     }
