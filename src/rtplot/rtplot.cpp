@@ -31,7 +31,7 @@ using namespace std;
 using namespace rtp;
 
 namespace {
-mutex auto_refresh_mtx;
+mutex refresh_mtx;
 }
 
 RTPlot::RTPlot() {
@@ -112,6 +112,11 @@ void RTPlot::setPlotName(size_t plot, const std::string& name) {
     refresh();
 }
 
+void RTPlot::refresh() {
+    std::lock_guard<std::mutex> lock(refresh_mtx);
+    redraw();
+}
+
 void RTPlot::enableAutoRefresh(uint period_ms) {
     bool create_thread = (impl_->auto_refresh_period_ == 0);
     impl_->auto_refresh_period_ = period_ms;
@@ -119,11 +124,9 @@ void RTPlot::enableAutoRefresh(uint period_ms) {
     if (create_thread) {
         impl_->auto_refresh_thread_ = thread([this]() {
             while (impl_->auto_refresh_period_) {
-                auto_refresh_mtx.lock();
-                this->refresh();
-                auto_refresh_mtx.unlock();
-                this_thread::sleep_for(
-                    std::chrono::milliseconds(impl_->auto_refresh_period_));
+                refresh_mtx.lock();
+                redraw();
+                refresh_mtx.unlock();
             }
         });
     }

@@ -107,7 +107,7 @@ public:
     /**
      * Refresh the plots with the current data.
      */
-    virtual void refresh() = 0;
+    void refresh();
 
     /**
      * Enable the automatic refreshing of the plots.
@@ -250,6 +250,11 @@ protected:
      * @return a shared pointer to the base class RTPlotCore
      */
     virtual std::shared_ptr<RTPlotCore> makePlot() = 0;
+
+    /**
+     * Redraw the window when called
+     */
+    virtual void redraw() = 0;
 
     /**
      * Must be call in the derived class constructor
