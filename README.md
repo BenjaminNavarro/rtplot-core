@@ -19,14 +19,14 @@ For a quick installation:
 
 To get last version :
  ```
-cd <path to pid workspace>/pid
-make deploy package=rtplot-core
+cd <path to pid workspace>
+pid deploy package=rtplot-core
 ```
 
 To get a specific version of the package :
  ```
-cd <path to pid workspace>/pid
-make deploy package=rtplot-core version=<version number>
+cd <path to pid workspace>
+pid deploy package=rtplot-core version=<version number>
 ```
 
 ## Standalone install
@@ -40,15 +40,27 @@ Then run the adequate install script depending on your system. For instance on l
 sh share/install/standalone_install.sh
 ```
 
-The pkg-config tool can be used to get all links and compilation flags for the libraries defined inthe project. To let pkg-config know these libraries, read the last output of the install_script and apply the given command. It consists in setting the PKG_CONFIG_PATH, for instance on linux do:
+The pkg-config tool can be used to get all links and compilation flags for the libraries defined in the project.
+
+To let pkg-config know these libraries, read the output of the install_script and apply the given command to configure the PKG_CONFIG_PATH.
+
+For instance on linux do:
 ```
-export PKG_CONFIG_PATH=<path to rtplot-core>/binaries/pid-workspace/share/pkgconfig:$PKG_CONFIG_PATH
+export PKG_CONFIG_PATH=<given path>:$PKG_CONFIG_PATH
 ```
 
 Then, to get compilation flags run:
 
 ```
 pkg-config --static --cflags rtplot-core_<name of library>
+```
+
+```
+pkg-config --variable=c_standard rtplot-core_<name of library>
+```
+
+```
+pkg-config --variable=cxx_standard rtplot-core_<name of library>
 ```
 
 To get linker flags run:

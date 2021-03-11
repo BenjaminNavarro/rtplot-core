@@ -62,7 +62,7 @@ void RTPlot::updateLayout() {
 }
 
 void RTPlot::setGridSize(size_t rows, size_t cols) {
-    assert((rows > 1) and (cols > 1));
+    assert((rows >= 1) and (cols >= 1));
     impl_->grid_rows_ = rows;
     impl_->grid_cols_ = cols;
     impl_->plots_.resize(rows * cols);

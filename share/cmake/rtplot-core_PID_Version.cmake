@@ -1,1 +1,1 @@
-set(rtplot-core_PID_VERSION 3 CACHE INTERNAL "")
+set(rtplot-core_PID_VERSION 4 CACHE INTERNAL "")
